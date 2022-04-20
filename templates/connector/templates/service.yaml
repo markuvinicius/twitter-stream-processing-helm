@@ -1,0 +1,14 @@
+{{- if .Values.global.service.connector.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.global.service.connector.name }}-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.global.service.connector.name }}
+  ports:
+    - port: {{ .Values.global.service.connector.port }}
+      targetPort: {{ .Values.global.service.connector.port }}
+  {{- end }}

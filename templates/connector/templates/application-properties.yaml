@@ -1,0 +1,14 @@
+{{- if .Values.global.service.connector.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-props-{{ .Values.global.service.connector.name }}-configmap
+  namespace: {{ .Values.global.namespace }}
+data:
+  application.properties: |-
+    kafka.bootstrap.server=localhost:9092
+    kafka.topic.name=twitter-status-json-input
+    kafka.application.id=twitter-stream-feeder
+    twitter.search.topics=russia
+    twitter.search.languages=pt
+{{- end }}

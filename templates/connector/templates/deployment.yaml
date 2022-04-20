@@ -1,0 +1,38 @@
+{{- if .Values.global.service.connector.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.global.service.connector.name }}-deployment
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.global.service.connector.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.global.service.connector.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.service.connector.name }}
+    spec:  
+      initContainers:
+        - name: check-broker-service
+          image: busybox:latest
+          command: [ 'sh', '-c',
+                     'until nc -vz -w 2 {{ .Values.global.service.broker.name }}-service 9092; do echo "Waiting for broker service"; sleep 2; done;' ]
+      containers:
+        - name: {{ .Values.global.service.connector.name }}
+          image: {{ .Values.global.service.connector.image }}
+          command: [ 'java', '-cp', 'app.jar', '{{ .Values.global.service.connector.classPath }}', '{{ .Values.global.service.connector.appConfigPath }}']                
+          ports:
+            - containerPort: {{ .Values.global.service.connector.port }}
+          volumeMounts:
+            - name: appconfig
+              mountPath: {{ .Values.global.service.connector.appConfigPath }}
+              subPath: application.properties
+      volumes:
+        - name: appconfig
+          configMap:
+            name: app-props-{{ .Values.global.service.connector.name }}-configmap
+  {{- end }}

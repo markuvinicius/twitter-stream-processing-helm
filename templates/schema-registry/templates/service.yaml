@@ -1,0 +1,14 @@
+{{- if .Values.global.service.schemaRegistry.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.global.service.schemaRegistry.name }}-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.global.service.schemaRegistry.name }}
+  ports:
+    - port: {{ .Values.global.service.schemaRegistry.port }}
+      targetPort: {{ .Values.global.service.schemaRegistry.port }}
+  {{- end }}

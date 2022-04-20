@@ -1,0 +1,40 @@
+{{- if .Values.global.service.schemaRegistry.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.global.service.schemaRegistry.name }}-deployment
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.global.service.schemaRegistry.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.global.service.schemaRegistry.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.service.schemaRegistry.name }}
+    spec:
+      initContainers:
+        - name: check-broker-service
+          image: busybox:latest
+          command: [ 'sh', '-c',
+                     'until nc -vz -w 2 {{ .Values.global.service.broker.name }}-service 9092; do echo "Waiting for broker service"; sleep 2; done;' ]
+      containers:
+        - name: {{ .Values.global.service.schemaRegistry.name }}
+          image: {{ .Values.global.service.schemaRegistry.image }}
+          env:
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              value: "{{ .Values.global.service.schemaRegistry.name }}-service"
+            - name: SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL
+              value: "{{ .Values.global.service.zookeeper.name }}-service:2181"
+            - name: SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN
+              value: "*"
+            - name: SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS
+              value: "GET,POST,PUT,OPTIONS'"
+            - name: SCHEMA_REGISTRY_ZOOKEEPER_CLIENT_PORT
+              value: "{{ .Values.global.service.zookeeper.port }}"
+          ports:
+            - containerPort: {{ .Values.global.service.schemaRegistry.port }}
+  {{- end }}

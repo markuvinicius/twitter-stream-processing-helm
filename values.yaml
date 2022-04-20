@@ -1,0 +1,28 @@
+# Default values for Twitter Processing Application.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  namespace: default
+  service:
+    zookeeper:
+      name: zookeeper
+      port: 2181
+      image: confluentinc/cp-zookeeper:5.4.1
+      enabled: true
+    broker:
+      name: broker
+      port: 9092
+      image: confluentinc/cp-kafka:5.4.1
+      enabled: true
+    schemaRegistry:
+      name: schema-registry
+      port: 8081
+      image: confluentinc/cp-schema-registry:5.4.1
+      enabled: true
+    connector:
+      name: collector
+      image: markuvinicius/twitter-collector:34
+      classPath: com.markuvinicius.twitter.stream.Application
+      appConfigPath: /config/application.properties
+      port: 4040
+      enabled: true
