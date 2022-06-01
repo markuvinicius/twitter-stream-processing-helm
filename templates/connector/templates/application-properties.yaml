@@ -6,9 +6,11 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 data:
   application.properties: |-
-    kafka.bootstrap.server=localhost:9092
+    kafka.bootstrap.server=broker-service:9092
     kafka.topic.name=twitter-status-json-input
     kafka.application.id=twitter-stream-feeder
-    twitter.search.topics=russia
+    kafka.value.serializer=com.markuvinicius.twitter.stream.serializers.JsonSerializer
+    kafka.key.serializer=org.apache.kafka.common.serialization.StringSerializer
+    twitter.search.topics=bolsonaro,lula,eleicoes
     twitter.search.languages=pt
 {{- end }}

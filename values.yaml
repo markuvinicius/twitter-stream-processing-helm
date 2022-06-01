@@ -20,8 +20,8 @@ global:
       image: confluentinc/cp-schema-registry:5.4.1
       enabled: true
     connector:
-      name: collector
-      image: markuvinicius/twitter-collector:34
+      name: connector
+      image: markuvinicius/twitter-connector:36
       classPath: com.markuvinicius.twitter.stream.Application
       appConfigPath: /config/application.properties
       port: 4040
