@@ -31,6 +31,8 @@ spec:
             - name: appconfig
               mountPath: {{ .Values.global.service.connector.appConfigPath }}
               subPath: application.properties
+      imagePullSecrets:
+        - name: regcred
       volumes:
         - name: appconfig
           configMap:

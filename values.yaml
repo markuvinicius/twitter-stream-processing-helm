@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
-  namespace: default
+  namespace: twitter-stream-processing
   service:
     zookeeper:
       name: zookeeper
@@ -26,3 +26,10 @@ global:
       appConfigPath: /config/application.properties
       port: 4040
       enabled: true
+#    connector_k:
+#      name: connector
+#      image: markuvinicius/twitter-connector:36
+#      classPath: com.markuvinicius.twitter.stream.Application
+#      appConfigPath: /config/application.properties
+#      port: 4040
+#      enabled: true
