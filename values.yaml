@@ -21,7 +21,7 @@ global:
       enabled: true
     connector:
       name: connector
-      image: markuvinicius/twitter-connector:36
+      image: markuvinicius/twitter-collector:36
       classPath: com.markuvinicius.twitter.stream.Application
       appConfigPath: /config/application.properties
       port: 4040
