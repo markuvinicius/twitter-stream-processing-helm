@@ -3,6 +3,12 @@
 # Declare variables to be passed into your templates.
 global:
   namespace: twitter-stream-processing
+  prometheusPort: 8088
+  imagePullPolicy: IfNotPresent
+  pullSecret: regcred
+  security:
+    kubernetesUserId: 1001
+    runAsRoot: true
   service:
     zookeeper:
       name: zookeeper
@@ -25,11 +31,31 @@ global:
       classPath: com.markuvinicius.twitter.stream.Application
       appConfigPath: /config/application.properties
       port: 4040
+      enabled: false
+    twitterKafkaConnector:
       enabled: true
-#    connector_k:
-#      name: connector
-#      image: markuvinicius/twitter-connector:36
-#      classPath: com.markuvinicius.twitter.stream.Application
-#      appConfigPath: /config/application.properties
-#      port: 4040
-#      enabled: true
+      name: kafka-connector
+      image: twitter-stream-processing-connect-worker:0.0.5
+      restPort: 30100
+      targetPort: 30100
+      nodePort: 30100
+      replicaCount: 1
+      memory:
+        max: 2Gi
+        min: 1Gi
+      cpu:
+        max: 750m
+        min: 250m
+      groupId: kafka-connect-cluster
+      storageTopic: kafka-connect-cluster.storage
+      offsetTopic: kafka-connect-cluster.offsets
+      statusTopic: kafka-connect-cluster.status
+      offsetFlushIntervalMs: 35000
+      offsetFlushTimeoutMs: 15000
+      connectorClientConfigOverridePolicy: All
+      keyConverter: org.apache.kafka.connect.storage.StringConverter
+      valueConverter: org.apache.kafka.connect.storage.StringConverter
+      logLevel: DEBUG
+      pluginPath: /usr/share/java,/etc/kafka-connect/jars,/usr/share/confluent-hub-components
+      securityProtocol: SSL
+

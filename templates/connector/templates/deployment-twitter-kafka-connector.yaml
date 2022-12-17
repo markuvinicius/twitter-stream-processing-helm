@@ -1,0 +1,105 @@
+{{- if .Values.global.service.twitterKafkaConnector.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.global.service.twitterKafkaConnector.name }}-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    app: {{ .Values.global.service.twitterKafkaConnector.name }}
+  type: NodePort
+  ports:
+    - port: {{ .Values.global.service.twitterKafkaConnector.restPort }}
+      targetPort: {{ .Values.global.service.twitterKafkaConnector.targetPort }}
+      nodePort: {{ .Values.global.service.twitterKafkaConnector.nodePort }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.global.service.twitterKafkaConnector.name }}-deployment
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Values.global.service.twitterKafkaConnector.name }}
+spec:
+  replicas: {{ .Values.global.service.twitterKafkaConnector.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.global.service.twitterKafkaConnector.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.service.twitterKafkaConnector.name }}
+        type: java
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '{{ .Values.global.prometheusPort }}'
+    spec:  
+      initContainers:
+        - name: check-broker-service
+          image: busybox:latest
+          command: [ 'sh', '-c',
+                     'until nc -vz -w 2 {{ .Values.global.service.broker.name }}-service 9092; do echo "Waiting for broker service"; sleep 2; done;' ]
+      containers:
+        - name: {{ .Values.global.service.twitterKafkaConnector.name }}
+          image: {{ .Values.global.service.twitterKafkaConnector.image }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          resources:
+            limits:
+              cpu: {{ .Values.global.service.twitterKafkaConnector.cpu.max }}
+              memory: {{ .Values.global.service.twitterKafkaConnector.memory.max }}
+            requests:
+              cpu: {{ .Values.global.service.twitterKafkaConnector.cpu.min }}
+              memory: {{ .Values.global.service.twitterKafkaConnector.memory.min }}
+          env:
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: "{{ .Values.global.service.broker.name }}-service:9092"
+            - name: CONNECT_GROUP_ID
+              value: "{{ .Values.global.service.twitterKafkaConnector.groupId }}"
+            - name: CONNECT_CONFIG_STORAGE_TOPIC
+              value: "{{ .Values.global.service.twitterKafkaConnector.storageTopic }}"
+            - name: CONNECT_OFFSET_STORAGE_TOPIC
+              value: "{{ .Values.global.service.twitterKafkaConnector.offsetTopic }}"
+            - name: CONNECT_OFFSET_FLUSH_INTERVAL_MS
+              value: "{{ .Values.global.service.twitterKafkaConnector.offsetFlushIntervalMs }}"
+            - name: CONNECT_OFFSET_FLUSH_TIMEOUT_MS
+              value: "{{ .Values.global.service.twitterKafkaConnector.offsetFlushTimeoutMs }}"
+            - name: CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY
+              value: "{{ .Values.global.service.twitterKafkaConnector.connectorClientConfigOverridePolicy }}"
+            - name: CONNECT_STATUS_STORAGE_TOPIC
+              value: "{{ .Values.global.service.twitterKafkaConnector.statusTopic }}"
+            - name: CONNECT_KEY_CONVERTER
+              value: "{{ .Values.global.service.twitterKafkaConnector.keyConverter }}"
+            - name: CONNECT_VALUE_CONVERTER
+              value: "{{ .Values.global.service.twitterKafkaConnector.valueConverter }}"
+            - name: CONNECT_REST_ADVERTISED_HOST_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CONNECT_REST_PORT
+              value: "{{ .Values.global.service.twitterKafkaConnector.restPort }}"
+            - name: CONNECT_LOG4J_ROOT_LOGLEVEL
+              value: "{{ .Values.global.service.twitterKafkaConnector.logLevel }}"
+            - name: CONNECT_PLUGIN_PATH
+              value: "{{ .Values.global.service.twitterKafkaConnector.pluginPath }}"
+            - name: JAVA_AGENT_PORT
+              value: "{{ .Values.global.prometheusPort }}"
+            - name: CONNECT_SECURITY_PROTOCOL
+              value: "{{ .Values.global.service.twitterKafkaConnector.securityProtocol }}"
+            - name: CONNECT_CONSUMER_SECURITY_PROTOCOL
+              value: "{{ .Values.global.service.twitterKafkaConnector.securityProtocol }}"
+            - name: CONNECT_PRODUCER_SECURITY_PROTOCOL
+              value: "{{ .Values.global.service.twitterKafkaConnector.securityProtocol }}"
+          ports:
+            - containerPort: {{ .Values.global.prometheusPort }}
+            - containerPort: {{ .Values.global.service.twitterKafkaConnector.restPort }}
+      imagePullSecrets:
+        - name: {{ .Values.global.pullSecret }}
+      securityContext:
+        fsGroup: {{ .Values.global.security.kubernetesUserId }}
+          {{- if not .Values.global.security.runAsRoot }}
+        runAsUser: {{ .Values.global.security.kubernetesUserId }}
+        runAsGroup: {{ .Values.global.security.kubernetesUserId }}
+          {{- end }}
+  {{- end }}
