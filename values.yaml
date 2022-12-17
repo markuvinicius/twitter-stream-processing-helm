@@ -35,7 +35,7 @@ global:
     twitterKafkaConnector:
       enabled: true
       name: kafka-connector
-      image: twitter-stream-processing-connect-worker:0.0.5
+      image: markuvinicius/twitter-stream-processing-kafka-connect-worker:0.0.1
       restPort: 30100
       targetPort: 30100
       nodePort: 30100
