@@ -35,17 +35,17 @@ global:
     twitterKafkaConnector:
       enabled: true
       name: kafka-connector
-      image: markuvinicius/twitter-stream-processing-kafka-connect-worker:0.0.1
+      image: markuvinicius/twitter-stream-processing-kafka-connect-worker:0.0.2
       restPort: 30100
       targetPort: 30100
       nodePort: 30100
       replicaCount: 1
-      memory:
-        max: 2Gi
-        min: 1Gi
-      cpu:
-        max: 750m
-        min: 250m
+#      memory:
+#        max: 2Gi
+#        min: 1Gi
+#      cpu:
+#        max: 750m
+#        min: 250m
       groupId: kafka-connect-cluster
       storageTopic: kafka-connect-cluster.storage
       offsetTopic: kafka-connect-cluster.offsets

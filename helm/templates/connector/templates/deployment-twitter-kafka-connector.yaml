@@ -45,13 +45,6 @@ spec:
         - name: {{ .Values.global.service.twitterKafkaConnector.name }}
           image: {{ .Values.global.service.twitterKafkaConnector.image }}
           imagePullPolicy: {{ .Values.global.imagePullPolicy }}
-          resources:
-            limits:
-              cpu: {{ .Values.global.service.twitterKafkaConnector.cpu.max }}
-              memory: {{ .Values.global.service.twitterKafkaConnector.memory.max }}
-            requests:
-              cpu: {{ .Values.global.service.twitterKafkaConnector.cpu.min }}
-              memory: {{ .Values.global.service.twitterKafkaConnector.memory.min }}
           env:
             - name: CONNECT_BOOTSTRAP_SERVERS
               value: "{{ .Values.global.service.broker.name }}-service:9092"
