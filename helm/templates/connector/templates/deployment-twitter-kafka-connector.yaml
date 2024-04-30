@@ -52,6 +52,12 @@ spec:
               value: "{{ .Values.global.service.twitterKafkaConnector.groupId }}"
             - name: CONNECT_CONFIG_STORAGE_TOPIC
               value: "{{ .Values.global.service.twitterKafkaConnector.storageTopic }}"
+            - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
+              value: "{{ .Values.global.service.twitterKafkaConnector.internalTopicsReplicationFactor }}"
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "{{ .Values.global.service.twitterKafkaConnector.internalTopicsReplicationFactor }}"
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: "{{ .Values.global.service.twitterKafkaConnector.internalTopicsReplicationFactor }}"
             - name: CONNECT_OFFSET_STORAGE_TOPIC
               value: "{{ .Values.global.service.twitterKafkaConnector.offsetTopic }}"
             - name: CONNECT_OFFSET_FLUSH_INTERVAL_MS

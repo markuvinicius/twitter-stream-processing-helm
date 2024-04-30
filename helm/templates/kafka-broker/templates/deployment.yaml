@@ -36,7 +36,7 @@ spec:
             - name: KAFKA_ADVERTISED_HOST_NAME
               value: "{{ .Values.global.service.broker.name }}-service"
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://$(KAFKA_ADVERTISED_HOST_NAME):9092"
+              value: "PLAINTEXT://{{ .Values.global.service.broker.name }}-service:9092"
             - name: KAFKA_DELETE_TOPIC_ENABLE
               value: "true"
             - name: KAFKA_JMX_PORT

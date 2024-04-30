@@ -40,6 +40,7 @@ global:
       targetPort: 30100
       nodePort: 30100
       replicaCount: 1
+      internalTopicsReplicationFactor: 1
 #      memory:
 #        max: 2Gi
 #        min: 1Gi
@@ -57,5 +58,5 @@ global:
       valueConverter: org.apache.kafka.connect.storage.StringConverter
       logLevel: DEBUG
       pluginPath: /usr/share/java,/etc/kafka-connect/jars,/usr/share/confluent-hub-components
-      securityProtocol: SSL
+      securityProtocol: PLAINTEXT
 
