@@ -59,4 +59,6 @@ global:
       logLevel: DEBUG
       pluginPath: /usr/share/java,/etc/kafka-connect/jars,/usr/share/confluent-hub-components
       securityProtocol: PLAINTEXT
+      topicCreationReplicationFactor: 1
+      topicCreationPartitions: 4
 

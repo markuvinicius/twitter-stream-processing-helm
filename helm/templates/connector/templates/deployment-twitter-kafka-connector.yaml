@@ -48,6 +48,14 @@ spec:
           env:
             - name: CONNECT_BOOTSTRAP_SERVERS
               value: "{{ .Values.global.service.broker.name }}-service:9092"
+            - name: CONNECT_KEY_CONVERTER
+              value: "org.apache.kafka.connect.storage.StringConverter"
+            - name: CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
+            - name: CONNECT_VALUE_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
             - name: CONNECT_GROUP_ID
               value: "{{ .Values.global.service.twitterKafkaConnector.groupId }}"
             - name: CONNECT_CONFIG_STORAGE_TOPIC
@@ -60,6 +68,8 @@ spec:
               value: "{{ .Values.global.service.twitterKafkaConnector.internalTopicsReplicationFactor }}"
             - name: CONNECT_OFFSET_STORAGE_TOPIC
               value: "{{ .Values.global.service.twitterKafkaConnector.offsetTopic }}"
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "1"
             - name: CONNECT_OFFSET_FLUSH_INTERVAL_MS
               value: "{{ .Values.global.service.twitterKafkaConnector.offsetFlushIntervalMs }}"
             - name: CONNECT_OFFSET_FLUSH_TIMEOUT_MS
@@ -68,10 +78,8 @@ spec:
               value: "{{ .Values.global.service.twitterKafkaConnector.connectorClientConfigOverridePolicy }}"
             - name: CONNECT_STATUS_STORAGE_TOPIC
               value: "{{ .Values.global.service.twitterKafkaConnector.statusTopic }}"
-            - name: CONNECT_KEY_CONVERTER
-              value: "{{ .Values.global.service.twitterKafkaConnector.keyConverter }}"
-            - name: CONNECT_VALUE_CONVERTER
-              value: "{{ .Values.global.service.twitterKafkaConnector.valueConverter }}"
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
             - name: CONNECT_REST_ADVERTISED_HOST_NAME
               valueFrom:
                 fieldRef:
